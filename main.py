@@ -1,3 +1,4 @@
+from itertools import count
 from time import time
 from uuid import uuid4
 from fastapi import FastAPI
@@ -30,7 +31,8 @@ def newtea(tea:NewteaModel):
         status="New Request",
         config=tea.config,
         type = tea.type,
-        orderId = uuid4().hex
+        orderId = uuid4().hex,
+        quantity= tea.count
     )
     
     # Store request in db
