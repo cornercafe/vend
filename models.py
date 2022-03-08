@@ -21,7 +21,7 @@ class NewteaModel(BaseModel):
 
 
 class TeaRequests(BaseModel):
-    id: str
+    key: str
     time: datetime
     machine_number: str
     amount: int

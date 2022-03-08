@@ -1,4 +1,3 @@
-import re
 from time import time
 from uuid import uuid4
 from fastapi import FastAPI
@@ -7,6 +6,7 @@ from api import create_new_task, paytm_api_call
 from db import store_new_request_to_db
 
 from models import DrinkType, NewteaModel, Paytm_api_call, TeaRequests
+
 app = FastAPI()
 
 MERCHANT_ID = '123456'
@@ -22,9 +22,8 @@ def read_root():
 def newtea(tea:NewteaModel):
     # Calculate Date
 
-
     newdata = TeaRequests(
-        id = uuid4().hex,
+        key = uuid4().hex,
         time = datetime.now(),
         machine_number= tea.machine_number,
         amount=tea.amount,
@@ -33,9 +32,6 @@ def newtea(tea:NewteaModel):
         type = tea.type,
         orderId = uuid4().hex
     )
-
-    
-    
     
     # Store request in db
     
@@ -67,8 +63,6 @@ def newtea(tea:NewteaModel):
     if result.resultInfo.resultStatus != 'SUCCESS':
         return "API Generation Failed"
         
-
-
     # Update status in DB 
     newdata.status = "QR GENERATED"
     store_new_request_to_db(newdata)
