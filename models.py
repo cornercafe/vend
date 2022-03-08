@@ -27,8 +27,10 @@ class TeaRequests(BaseModel):
     amount: int
     status: str
     type : DrinkType
+    quantity : int
     orderId : str
     config: Optional[Status]
+    
 
 class Paytm_api_call(BaseModel):
     mid          : str
