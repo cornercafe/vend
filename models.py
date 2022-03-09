@@ -44,9 +44,23 @@ class Result_info(BaseModel):
     resultCode : str
     resultMsg : str
 
-class Output(BaseModel):
+class NewTxnApiRes(BaseModel):
     qrCodeId : str
     qrData : str
     image : str
     resultInfo: Result_info
 
+class TxnStsApiRes(BaseModel):
+    resultInfo : Result_info
+    txnId : str
+    bankTxnId : str
+    orderId : str
+    txnAmount : int
+    txnType : str
+    gatewayName : str
+    bankName : str
+    mid : str
+    paymentMode : str
+    refundAmt : int
+    txnDate : str
+    authRefId : str
