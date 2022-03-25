@@ -16,4 +16,4 @@ def store_new_request_to_db(new_request: TeaRequests):
     return requestsDB.put(json.loads(data))
 
 def get_request_from_db(request_id:str) -> Optional[TeaRequests]:
-    return requestsDB.get(request_id)
+    return TeaRequests(**requestsDB.get(request_id))

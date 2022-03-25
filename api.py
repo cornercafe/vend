@@ -12,58 +12,54 @@ from paytmchecksum import PaytmChecksum
 # url = "https://securegw-stage.paytm.in/paymentservices/qr/create"
 
 # for Production
-url = "https://securegw.paytm.in/paymentservices/qr/create"
+create_url = "https://securegw.paytm.in/paymentservices/qr/create"
+txn_url = "https://securegw.paytm.in/v3/order/status"
 
 def generate_post_data(amount: int, id: str):
     paytmParams = dict()
     paytmParams["body"] = {
-        "mid"           : os.getenv("MERCHANT_ID"),
-        "orderId"       : id,
-        "amount"        : str(amount),
-        "businessType"  : "UPI_QR_CODE",
-        "posId"         : "S12_1632"
+        "mid": os.getenv("MERCHANT_ID"),
+        "orderId": id,
+        "amount": str(amount),
+        "businessType": "UPI_QR_CODE",
+        "posId": "S12_1632",
     }
-    # Generate checksum by parameters we have in body
-    # Find your Merchant Key in your Paytm Dashboard at https://dashboard.paytm.com/next/apikeys 
-    checksum = PaytmChecksum.generateSignature(json.dumps(paytmParams["body"]), os.getenv("MERCHANT_KEY"))
-    paytmParams["head"] = {
-        "clientId"	        : "C11",
-        "version"	        : "v1",
-        "signature"         : checksum
-    }
+    checksum = PaytmChecksum.generateSignature(
+        json.dumps(paytmParams["body"]), os.getenv("MERCHANT_KEY")
+    )
+    paytmParams["head"] = {"clientId": "C11", "version": "v1", "signature": checksum}
     print(paytmParams)
-
     return json.dumps(paytmParams)
 
-def paytm_api_call(paytm:Paytm_api_call):
+
+def generate_txn_get_data(orderid: str):
+    paytmParams = dict()
+    paytmParams["body"] = {
+        "mid": os.getenv("MERCHANT_ID"),
+        "orderId": orderid,
+    }
+    checksum = PaytmChecksum.generateSignature(
+        json.dumps(paytmParams["body"]), os.getenv("MERCHANT_KEY")
+    )
+    paytmParams["head"] = {"signature": checksum}
+    return json.dumps(paytmParams)
+
+
+def paytm_api_call(paytm: Paytm_api_call):
     post_data = generate_post_data(paytm.amount, paytm.orderId)
-    response = requests.post(url, data = post_data, headers = {"Content-type": "application/json"}).json()
+    response = requests.post(
+        create_url, data=post_data, headers={"Content-type": "application/json"}
+    ).json()
     print(response)
-    return NewTxnApiRes(**response)
+    return NewTxnApiRes(**response["body"])
+
 
 def create_new_task():
     return True
 
-def transaction_status(mid,order_id):
-    result = {
-        "resultInfo": {
-            "resultStatus": "TXN_SUCCESS",
-            "resultCode": "01",
-            "resultMsg": "Txn Success"
-        },
-        "txnId": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "bankTxnId": "xxxxxxxxxxxxxxx",
-        "orderId": "xxxxxxx",
-        "txnAmount": "100.00",
-        "txnType": "SALE",
-        "gatewayName": "HDFC",
-        "bankName": "HSBC",
-        "mid": "xxxxxxxxxxxxxxxxxxxx",
-        "paymentMode": "CC",
-        "refundAmt": "100.00",
-        "txnDate": "2019-02-20 12:35:20.0",
-        "authRefId": "50112883"
-    }
 
-    return TxnStsApiRes(**result)
-       
+def transaction_status(mid, order_id):
+    post_data = generate_txn_get_data(order_id)
+    response = requests.post(txn_url, data = post_data, headers = {"Content-type": "application/json"}).json()
+    print(response)
+    return TxnStsApiRes(**response["body"])

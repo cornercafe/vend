@@ -53,14 +53,14 @@ class NewTxnApiRes(BaseModel):
 class TxnStsApiRes(BaseModel):
     resultInfo : Result_info
     txnId : str
-    bankTxnId : str
+    bankTxnId : Optional[str]
     orderId : str
-    txnAmount : int
+    txnAmount : Optional[str]
     txnType : str
-    gatewayName : str
-    bankName : str
+    gatewayName : Optional[str]
+    bankName : Optional[str]
     mid : str
-    paymentMode : str
-    refundAmt : int
+    paymentMode : Optional[str]
+    refundAmt : Optional[str]
     txnDate : str
-    authRefId : str
+    authRefId : Optional[str]
