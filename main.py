@@ -6,8 +6,9 @@ from fastapi import FastAPI
 from datetime import datetime
 from api import create_new_task, paytm_api_call, transaction_status
 from db import get_request_from_db, store_new_request_to_db
+from functions import generate_qr
 
-from models import DrinkType, NewteaModel, Paytm_api_call, TeaRequests
+from models import DrinkType, NewteaModel, Paytm_api_call, QR_Res_Model, TeaRequests
 
 app = FastAPI()
 
@@ -58,27 +59,23 @@ def newtea(tea:NewteaModel):
         businessType="UPI_QR_CODE",
         posId=POS_ID
     )
-
-    result = paytm_api_call(data)
-    
+    result = paytm_api_call(data)    
     # Check result status
-
     if result.resultInfo.resultStatus != 'SUCCESS':
         return "API Generation Failed"
-        
     # Update status in DB 
     newdata.status = "QR GENERATED"
     store_new_request_to_db(newdata)
-
     # Create new task to poll txn resul api.
-
     create_new_task()
     # return qr response
-
+    qr, length = generate_qr(result.qrData)
     return {
-        'qr' : result.qrData,
+        'qr' : qr,
+        'size' : length,
         'request_id': newdata.key
     }
+
 
 
 @app.get("/payment/status/{request_id}")

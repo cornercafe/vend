@@ -28,7 +28,6 @@ def generate_post_data(amount: int, id: str):
         json.dumps(paytmParams["body"]), os.getenv("MERCHANT_KEY")
     )
     paytmParams["head"] = {"clientId": "C11", "version": "v1", "signature": checksum}
-    print(paytmParams)
     return json.dumps(paytmParams)
 
 
@@ -50,7 +49,6 @@ def paytm_api_call(paytm: Paytm_api_call):
     response = requests.post(
         create_url, data=post_data, headers={"Content-type": "application/json"}
     ).json()
-    print(response)
     return NewTxnApiRes(**response["body"])
 
 

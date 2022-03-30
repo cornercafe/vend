@@ -64,3 +64,8 @@ class TxnStsApiRes(BaseModel):
     refundAmt : Optional[str]
     txnDate : str
     authRefId : Optional[str]
+
+
+class QR_Res_Model(BaseModel):
+    qr: str
+    request_id: str
