@@ -1,4 +1,3 @@
-from ctypes import sizeof
 import pyqrcode
 import math
 
@@ -18,7 +17,6 @@ def genStr(data):
 
 
 def BinaryToDecimal(binary):
-        
     binary1 = binary
     decimal, i, n = 0, 0, 0
     while(binary != 0):
