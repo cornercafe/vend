@@ -4,7 +4,7 @@ import math
 def generate_qr(text:str):
     qr = pyqrcode.create(text)
     qrData = qr.text(quiet_zone=0).replace('\n', '')
-    return genStr(qrData) , math.sqrt(len(qrData))
+    return qrData , math.sqrt(len(qrData))
 
 
 def genStr(data):
